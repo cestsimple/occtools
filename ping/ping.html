@@ -9,6 +9,7 @@
 	<h1>多路延迟测试工具 OCC_Version_1.0</h1>
 	<br>
 	<div id="app">
+		[[ t_latency_1 ]]
 		<div class="ping_box">
 			<div>1.
 				<input v-model="ip_1">	
@@ -78,28 +79,29 @@
 				inter_1 : null,
 			},
 			methods:{
-				show_latency_1(ip){
-					this.show_1 = true;
+				get_latency_1(){
 					let p = new Ping();
-					ip = 'https://' + ip;
-					console.log(ip);
-					if (ip.split('.').length < 1) {
-						alert('IP格式不正确');
-					} else {
-						this.inter_1 = setInterval(
-							function(){
-								p.ping(ip, function(err, data){
-									this.t_latency_1 = data
-									console.log(data)
-								})
-							}, 
-						2000)					
-					}
+					p.ping(this.ip_1, async function(err, data){	
+						this.t_latency_1 = data	
+						await vm.$nextTick(console.log(vm.$el.textContent))					
+					})			
 				},
+				
 				stop_latency_1(){
 					clearInterval(this.inter_1)
 					this.show_1 = false
 				},
+				
+				show_latency_1(){				
+					this.show_1 = true;
+					this.ip_1 = 'https://' + this.ip_1;
+					console.log(this.ip_1);
+					if (this.ip_1.split('.').length < 1) {
+						alert('IP格式不正确');
+					} else {
+						this.inter_1 = setInterval(this.get_latency_1, 2000)
+					}
+				},				
 			},
 		})
 	</script>
