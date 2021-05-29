@@ -1,57 +1,46 @@
 <html>
 <head>
 	<title>Ping Tool</title>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="js/vue.js"></script>
+	<script src="js/axios.min.js"></script>
 	<script src="js/ping.js"></script>
+	<style>
+		:root {
+			font-size: 16;
+			color: rgb(166, 155, 135);
+			background: rgb(74, 70, 62);
+		}
+
+		input {
+			color: white;
+			background-color: rgb(78, 74, 65);
+		}
+
+		.ping_box div {
+			
+			margin: 5px;
+			padding: 3px;
+		}
+
+		.ping_box span {
+			margin-right: 10px;
+			margin-right: 10px;
+		}
+	</style>
 </head>
 <body >
-	<h1>多路延迟测试工具 OCC_Version_1.0</h1>
+	<h1>多路延迟测试工具 OCC_Version_0.1</h1>
 	<br>
 	<div id="app">
-		[[ t_latency_1 ]]
 		<div class="ping_box">
 			<div>1.
 				<input v-model="ip_1">	
-				<button type='button' @click="show_latency_1(ip_1)">Ping</button>
+				<button type='button' @click="ping_start(ip_1)">Ping</button>
 				<button type='button' @click="stop_latency_1(ip_1)">Stop</button>
 				<div v-if='show_1'>
 					<span>气站名: [[ ip_1 ]]</span>
-					<span>延迟：[[ t_latency_1 ]]</span>		
-				</div>
-						
-			</div>
-			<hr>
-		</div>
-		<div class="ping_box">
-			<div>2.
-				<input v-model="ip_2">	
-				<button type='button' @click="show_latency(ip_2)">Ping</button>
-				<p>{{ t_latency_2 }}</p>
-			</div>
-			<hr>
-		</div>
-		<div class="ping_box">
-			<div>3.
-				<input v-model="ip_3">	
-				<button type='button' @click="show_latency(ip_3)">Ping</button>
-				<div>{{ t_latency_3 }}</div>
-			</div>
-			<hr>
-		</div>
-		<div class="ping_box">
-			<div>4.
-				<input v-model="ip_4">	
-				<button type='button' @click="show_latency(ip_4)">Ping</button>
-				<div>{{ t_latency_4 }}</div>
-			</div>
-			<hr>
-		</div>
-		<div class="ping_box">
-			<div>5.
-				<input v-model="ip_5">	
-				<button type='button' @click="show_latency(ip_5)">Ping</button>
-				<div>{{ t_latency_5 }}</div>
+					<span id=ping1>状态: Loading...</span>		
+				</div>					
 			</div>
 			<hr>
 		</div>
@@ -63,27 +52,22 @@
 			delimiters: ['[[', ']]'],
 			data:{
 				ip_1: "",
-				ip_2: "",
-				ip_3: "",
-				ip_4: "",
-				ip_5: "",
-				ip_6: "",
 				show_1 : false,
 				t_latency_1: 0,
-				t_latency_2: 0,
-				t_latency_3: null,
-				t_latency_4: null,
-				t_latency_5: null,
-				t_latency_6: null,
 				site_name_1 : 'CN_SSS',
 				inter_1 : null,
 			},
 			methods:{
-				get_latency_1(){
-					let p = new Ping();
-					p.ping(this.ip_1, async function(err, data){	
-						this.t_latency_1 = data	
-						await vm.$nextTick(console.log(vm.$el.textContent))					
+				get_latency_1(ip, p){
+					p.ping(ip, function(err, data){	
+						let ping_value = document.getElementById("ping1");
+						if (data > 1500 || data <= 2) {
+							ping_value.textContent = '状态: 超时'
+						} else {
+							ping_value.textContent = '延迟: ' + data;
+							
+						}
+						//await vm.$nextTick(console.log(vm.$el.textContent))					
 					})			
 				},
 				
@@ -92,14 +76,14 @@
 					this.show_1 = false
 				},
 				
-				show_latency_1(){				
-					this.show_1 = true;
-					this.ip_1 = 'https://' + this.ip_1;
-					console.log(this.ip_1);
-					if (this.ip_1.split('.').length < 1) {
+				ping_start(){				
+					if (this.ip_1.split('.').length <= 1) {
 						alert('IP格式不正确');
 					} else {
-						this.inter_1 = setInterval(this.get_latency_1, 2000)
+						this.show_1 = true;
+						let ip = 'http://' + this.ip_1;
+						let p = new Ping()
+						this.inter_1 = setInterval(this.get_latency_1, 1000, ip, p)
 					}
 				},				
 			},
