@@ -29,7 +29,8 @@
 	</style>
 </head>
 <body >
-	<h1>多路延迟测试工具 OCC_Version_0.1</h1>
+	<h1>延迟测试工具 OCC_Version_0.1</h1>
+	<div>使用方法：输入IP（可不加10.16）点击Ping</div>
 	<br>
 	<div id="app">
 		<div class="ping_box">
@@ -38,8 +39,8 @@
 				<button type='button' @click="ping_start(ip_1)">Ping</button>
 				<button type='button' @click="stop_latency_1(ip_1)">Stop</button>
 				<div v-if='show_1'>
-					<span>气站名: [[ ip_1 ]]</span>
-					<span id=ping1>状态: Loading...</span>		
+					<span>IP : [[ show_ip_1 ]]</span>
+					<span id=ping1>状态: 超时...</span>		
 				</div>					
 			</div>
 			<hr>
@@ -52,20 +53,18 @@
 			delimiters: ['[[', ']]'],
 			data:{
 				ip_1: "",
+				show_ip_1 : "",
 				show_1 : false,
 				t_latency_1: 0,
 				site_name_1 : 'CN_SSS',
 				inter_1 : null,
 			},
 			methods:{
-				get_latency_1(ip, p){
+				get_latency(ip, p){
 					p.ping(ip, function(err, data){	
 						let ping_value = document.getElementById("ping1");
-						if (data > 1500 || data <= 2) {
-							ping_value.textContent = '状态: 超时'
-						} else {
-							ping_value.textContent = '延迟: ' + data;
-							
+						if (data < 1500 && data > 1) {
+							ping_value.textContent = ' 状态: OK 延迟: ' + data;					
 						}
 						//await vm.$nextTick(console.log(vm.$el.textContent))					
 					})			
@@ -76,15 +75,23 @@
 					this.show_1 = false
 				},
 				
-				ping_start(){				
-					if (this.ip_1.split('.').length <= 1) {
-						alert('IP格式不正确');
-					} else {
-						this.show_1 = true;
-						let ip = 'http://' + this.ip_1;
-						let p = new Ping()
-						this.inter_1 = setInterval(this.get_latency_1, 1000, ip, p)
+				ping_start(){		
+					let type_ip = this.ip_1.split('.').length;
+					if (this.ip_1.endsWith('com')) {
+						type_ip = 4
 					}
+					if (type_ip == 2) {
+						this.ip_1 = '10.16.' + this.ip_1;
+					} else if (type_ip == 4) {
+						   //pass;
+					} else {
+						alert('IP格式不正确');
+					}
+					this.show_ip_1 = this.ip_1;
+					let ip = 'http://' + this.ip_1;		
+					this.show_1 = true;
+					let p = new Ping();
+					this.inter_1 = setInterval(this.get_latency, 1000, ip, p);		
 				},				
 			},
 		})
