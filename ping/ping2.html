@@ -1,0 +1,138 @@
+<html>
+<head>
+	<title>Ping Tool</title>
+	<script src="js/vue.js"></script>
+	<script src="js/axios.min.js"></script>
+	<script src="js/ping.js"></script>
+	<style>
+		li {
+			list-style: none;
+		}
+
+		:root {
+			font-size: 16;
+			color: rgb(166, 155, 135);
+			background: rgb(74, 70, 62);
+		}
+
+		input {
+			color: white;
+			background-color: rgb(78, 74, 65);
+		}
+
+		.ping_box div {
+			
+			margin: 5px;
+			padding: 3px;
+		}
+
+		.ping_box span {
+			margin-right: 10px;
+			margin-right: 10px;
+		}
+	</style>
+</head>
+<body >
+	<h1>延迟测试工具 OCC_Version_0.1</h1>
+	<div>使用方法：输入IP（可不加10.16）点击Ping</div>
+	<br>
+	<div id="app">
+		<div class="ping_box">
+			<div>
+				<input v-model="ip_1">
+				<button type='button' @click="add_ip()">添加到Ping列表</button>
+				<button type='button' @click="stop_latency_1(ip_1)">Stop</button>	
+			</div>					
+		</div>
+		<hr>
+		<div class="ping_ip" >
+			<ul>
+				<li v-for="(item, index) in ip_list">IP-[[ index ]]: [[ item ]]</li>
+			</ul>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: "#app",
+			delimiters: ['[[', ']]'],
+			data:{
+				ip_1: "",
+				show_ip_1 : "",
+				show_1 : false,
+				t_latency_1: 0,
+				inter_1 : null,
+				box_list: [],
+				ip_list: ['http://bb.com'],
+			},
+			methods:{
+				add_ip(){
+					let wrong = 0;
+					let type_ip = this.ip_1.split('.').length;
+					if (this.ip_1.endsWith('com')) {
+						type_ip = 4
+					}
+					if (type_ip == 2) {
+						this.ip_1 = '10.16.' + this.ip_1;
+					} else if (type_ip == 4) {
+						   //pass;
+					} else {
+						alert('IP格式不正确');
+						wrong = 1
+					}
+					if ( !wrong ) {
+						this.show_ip_1 = this.ip_1;
+						let ip = 'http://' + this.ip_1;		
+						this.show_1 = true;				
+						if (this.ip_list.find(e => e == ip)) {
+							alert('已在测试 !')
+						} else {
+							this.ip_list.push(ip);
+						}
+					}				
+				},
+
+				del_box(index){
+					this.box_list.splice(index, 1);
+				},
+
+				get_latency(ip, p){
+					p.ping(ip, function(err, data){	
+						let ping_value = document.getElementById("ping1");
+						if (data < 1500 && data > 1) {
+							ping_value.textContent = ' 状态: OK 延迟: ' + data;					
+						}				
+					})			
+				},
+				
+				stop_latency_1(){
+					clearInterval(this.inter_1)
+					this.show_1 = false
+				},
+				
+				ping_start(){
+					let wrong = 0;
+					let type_ip = this.ip_1.split('.').length;
+					if (this.ip_1.endsWith('com')) {
+						type_ip = 4
+					}
+					if (type_ip == 2) {
+						this.ip_1 = '10.16.' + this.ip_1;
+					} else if (type_ip == 4) {
+						   //pass;
+					} else {
+						alert('IP格式不正确');
+						wrong = 1;
+					}
+					this.show_ip_1 = this.ip_1;
+					let ip = 'http://' + this.ip_1;		
+					this.show_1 = true;
+					
+					let p = new Ping();
+					this.inter_1 = setInterval(this.get_latency, 1000, ip, p);		
+				},				
+			},
+		})
+	</script>
+</body>
+</html>
