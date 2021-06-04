@@ -36,11 +36,47 @@
 		<div class="ping_box">
 			<div>1.
 				<input v-model="ip_1">	
-				<button type='button' @click="ping_start(ip_1)">Ping</button>
+				<button type='button' @click="ping_start(ip_1, 1)">Ping</button>
 				<button type='button' @click="stop_latency_1(ip_1)">Stop</button>
 				<div v-if='show_1'>
 					<span>IP : [[ show_ip_1 ]]</span>
 					<span id=ping1>状态: 超时...</span>		
+				</div>					
+			</div>
+			<div>2.
+				<input v-model="ip_2">	
+				<button type='button' @click="ping_start(ip_2, 2)">Ping</button>
+				<button type='button' @click="stop_latency_2(ip_2)">Stop</button>
+				<div v-if='show_2'>
+					<span>IP : [[ show_ip_2 ]]</span>
+					<span id=ping2>状态: 超时...</span>		
+				</div>					
+			</div>
+			<div>3.
+				<input v-model="ip_3">	
+				<button type='button' @click="ping_start(ip_3, 3)">Ping</button>
+				<button type='button' @click="stop_latency_3(ip_3)">Stop</button>
+				<div v-if='show_3'>
+					<span>IP : [[ show_ip_3 ]]</span>
+					<span id=ping3>状态: 超时...</span>		
+				</div>					
+			</div>
+			<div>4.
+				<input v-model="ip_4">	
+				<button type='button' @click="ping_start(ip_4, 4)">Ping</button>
+				<button type='button' @click="stop_latency_4(ip_4)">Stop</button>
+				<div v-if='show_4'>
+					<span>IP : [[ show_ip_4 ]]</span>
+					<span id=ping4>状态: 超时...</span>		
+				</div>					
+			</div>
+			<div>5.
+				<input v-model="ip_5">	
+				<button type='button' @click="ping_start(ip_5, 5)">Ping</button>
+				<button type='button' @click="stop_latency_5(ip_5)">Stop</button>
+				<div v-if='show_5'>
+					<span>IP : [[ show_ip_5 ]]</span>
+					<span id=ping5>状态: 超时...</span>		
 				</div>					
 			</div>
 			<hr>
@@ -55,43 +91,126 @@
 				ip_1: "",
 				show_ip_1 : "",
 				show_1 : false,
-				t_latency_1: 0,
-				site_name_1 : 'CN_SSS',
 				inter_1 : null,
+				//////////
+				ip_2: "",
+				show_ip_2 : "",
+				show_2 : false,
+				inter_2 : null,
+				//////////
+				ip_3: "",
+				show_ip_3 : "",
+				show_3 : false,
+				inter_3 : null,
+				//////////
+				ip_4: "",
+				show_ip_4 : "",
+				show_4 : false,
+				inter_4 : null,
+				//////////
+				ip_5: "",
+				show_ip_5 : "",
+				show_5 : false,
+				inter_5 : null,
 			},
 			methods:{
-				get_latency(ip, p){
+				get_latency(ip, p, index){
 					p.ping(ip, function(err, data){	
-						let ping_value = document.getElementById("ping1");
-						if (data < 1500 && data > 1) {
+						let ping_value = null;
+						if (index == 1) {
+							ping_value = document.getElementById("ping1");	
+						} else if (index == 2){
+							ping_value = document.getElementById("ping2");
+						} else if (index == 3){
+							ping_value = document.getElementById("ping3");
+						} else if (index == 4){
+							ping_value = document.getElementById("ping4");
+						} else if (index == 5){
+							ping_value = document.getElementById("ping5");
+						}	
+						if (data < 1000 && data > 1) {
 							ping_value.textContent = ' 状态: OK 延迟: ' + data;					
-						}
-						//await vm.$nextTick(console.log(vm.$el.textContent))					
+						}				
 					})			
 				},
 				
 				stop_latency_1(){
 					clearInterval(this.inter_1)
 					this.show_1 = false
+					this.ip_1 = '';
+				},
+
+				stop_latency_2(){
+					clearInterval(this.inter_2)
+					this.show_2 = false
+					this.ip_2 = '';
+				},
+
+				stop_latency_3(){
+					clearInterval(this.inter_3)
+					this.show_3 = false
+					this.ip_3 = '';
+				},
+
+				stop_latency_4(){
+					clearInterval(this.inter_4)
+					this.show_4 = false
+					this.ip_4 = '';
+				},
+
+				stop_latency_5(){
+					clearInterval(this.inter_5)
+					this.show_5 = false
+					this.ip_5 = '';
 				},
 				
-				ping_start(){		
-					let type_ip = this.ip_1.split('.').length;
-					if (this.ip_1.endsWith('com')) {
+				ping_start(raw_ip, index){	
+					let wrong = 0;
+					let type_ip = raw_ip.split('.').length;
+					if (raw_ip.endsWith('com')) {
 						type_ip = 4
 					}
 					if (type_ip == 2) {
-						this.ip_1 = '10.16.' + this.ip_1;
+						raw_ip = '10.16.' + raw_ip;
 					} else if (type_ip == 4) {
 						   //pass;
 					} else {
 						alert('IP格式不正确');
+						wrong = 1;
 					}
-					this.show_ip_1 = this.ip_1;
-					let ip = 'http://' + this.ip_1;		
-					this.show_1 = true;
-					let p = new Ping();
-					this.inter_1 = setInterval(this.get_latency, 1000, ip, p);		
+
+					if (wrong == 0) {
+						if (index == 1) {
+							this.show_ip_1 = raw_ip;
+							this.show_1 = true;	
+						} else if (index == 2){
+							this.show_ip_2 = raw_ip
+							this.show_2 = true;
+						} else if (index == 3){
+							this.show_ip_3 = raw_ip
+							this.show_3 = true;
+						} else if (index == 4){
+							this.show_ip_4 = raw_ip
+							this.show_4 = true;
+						} else if (index == 5){
+							this.show_ip_5 = raw_ip
+							this.show_5 = true;
+						}
+						let ip = 'http://' + raw_ip;		
+						let p = new Ping();
+						if (index == 1) {
+							this.inter_1 = setInterval(this.get_latency, 2000, ip, p, 1);	
+						} else if (index == 2){
+							this.inter_2 = setInterval(this.get_latency, 2000, ip, p, 2);
+						} else if (index == 3){
+							this.inter_3 = setInterval(this.get_latency, 2000, ip, p, 3);
+						} else if (index == 4){
+							this.inter_4 = setInterval(this.get_latency, 2000, ip, p, 4);
+						} else if (index == 5){
+							this.inter_5 = setInterval(this.get_latency, 2000, ip, p, 5);
+						}	
+					}
+								
 				},				
 			},
 		})
