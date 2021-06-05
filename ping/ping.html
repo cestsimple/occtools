@@ -1,85 +1,80 @@
 <html>
 <head>
-	<title>Ping Tool</title>
-	<script src="js/vue.js"></script>
-	<script src="js/axios.min.js"></script>
-	<script src="js/ping.js"></script>
-	<style>
-		:root {
-			font-size: 16;
-			color: rgb(166, 155, 135);
-			background: rgb(74, 70, 62);
-		}
-
-		input {
-			color: white;
-			background-color: rgb(78, 74, 65);
-		}
-
-		.ping_box div {
-			
-			margin: 5px;
-			padding: 3px;
-		}
-
-		.ping_box span {
-			margin-right: 10px;
-			margin-right: 10px;
-		}
-	</style>
+	<meta charset="UTF-8">
+	<title>Ping_Tool</title>
+	<link rel="icon" type="image/x-icon" href="./statics/favicon.ico">
+	<script type="text/javascript" src="./js/vue.js"></script>
+	<script type="text/javascript" src="./js/axios.min.js"></script>
+	<script type="text/javascript" src="./js/ping.js"></script>
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body >
-	<h1>延迟测试工具 OCC_Version_0.1</h1>
-	<div>使用方法：输入IP（可不加10.16）点击Ping</div>
-	<br>
+	<header fxlayout="row"; fxlayoutalign="center" fxlayoutgap="20px" >
+		<img alt="Logo" style="margin-right: 20px;" src="./statics/al.png">
+		<span fxflex="" style="margin-right: 20px; flex: 1 1 0%; box-sizing: border-box;"></span>
+		<span style="margin-right: 15px; text-decoration: line-through">
+			<a href='#'>编辑气站IP库</a>
+		</span>
+		<span style="margin-right: 15px;">|</span>
+		<span style="margin-right: 15px;">Asia/Shanghai +08:00</span>
+		<span style="margin-right: 15px;">|</span>
+		<span style="font-size: 12; margin-right: 15px;">v-0.2</span>		
+	</header>
 	<div id="app">
-		<div class="ping_box">
-			<div>1.
-				<input v-model="ip_1">	
+		<div style="font-size: 42; font-weight: 800; margin-bottom: 5px;">OCC_连通性测试工具</div>
+		<div style="font-size: 12;">说明：每2s更新一次，若卡住直接F5</div>
+		<br>
+		<div >
+			<div class="ping_box">1.
+				<input v-model="ip_1" placeholder="输入IP, 可不加10.16">	
 				<button type='button' @click="ping_start(ip_1, 1)">Ping</button>
 				<button type='button' @click="stop_latency_1(ip_1)">Stop</button>
 				<div v-if='show_1'>
-					<span>IP : [[ show_ip_1 ]]</span>
+					<span>IP: [[ show_ip_1 ]]</span>
 					<span id=ping1>状态: 超时...</span>		
 				</div>					
 			</div>
-			<div>2.
+			<div class="ping_box">2.
 				<input v-model="ip_2">	
 				<button type='button' @click="ping_start(ip_2, 2)">Ping</button>
 				<button type='button' @click="stop_latency_2(ip_2)">Stop</button>
 				<div v-if='show_2'>
-					<span>IP : [[ show_ip_2 ]]</span>
+					<span>IP: [[ show_ip_2 ]]</span>
 					<span id=ping2>状态: 超时...</span>		
 				</div>					
 			</div>
-			<div>3.
+			<div class="ping_box">3.
 				<input v-model="ip_3">	
 				<button type='button' @click="ping_start(ip_3, 3)">Ping</button>
 				<button type='button' @click="stop_latency_3(ip_3)">Stop</button>
 				<div v-if='show_3'>
-					<span>IP : [[ show_ip_3 ]]</span>
+					<span>IP: [[ show_ip_3 ]]</span>
 					<span id=ping3>状态: 超时...</span>		
 				</div>					
 			</div>
-			<div>4.
+			<div class="ping_box">4.
 				<input v-model="ip_4">	
 				<button type='button' @click="ping_start(ip_4, 4)">Ping</button>
 				<button type='button' @click="stop_latency_4(ip_4)">Stop</button>
 				<div v-if='show_4'>
-					<span>IP : [[ show_ip_4 ]]</span>
+					<span>IP: [[ show_ip_4 ]]</span>
 					<span id=ping4>状态: 超时...</span>		
 				</div>					
 			</div>
-			<div>5.
+			<div class="ping_box">5.
 				<input v-model="ip_5">	
 				<button type='button' @click="ping_start(ip_5, 5)">Ping</button>
 				<button type='button' @click="stop_latency_5(ip_5)">Stop</button>
 				<div v-if='show_5'>
-					<span>IP : [[ show_ip_5 ]]</span>
+					<span>IP: [[ show_ip_5 ]]</span>
 					<span id=ping5>状态: 超时...</span>		
 				</div>					
 			</div>
-			<hr>
+			<hr style="margin-top: 50px;">
+			<footer style="-webkit-transform-origin-x: 50%; -webkit-transform: scale(0.70);">
+				<div style="font-size: 15;">实现：通过获取网站 Favicon.ico 测试网络连通性，延迟值仅供参考</div>
+				<div style="font-size: 10;">HooWoo.</div>
+			</footer>
 		</div>
 	</div>
 	
@@ -128,7 +123,7 @@
 						} else if (index == 5){
 							ping_value = document.getElementById("ping5");
 						}	
-						if (data < 1000 && data > 1) {
+						if (data < 2000 && data > 1) {
 							ping_value.textContent = ' 状态: OK 延迟: ' + data;					
 						}				
 					})			
