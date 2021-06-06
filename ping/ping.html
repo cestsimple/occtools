@@ -22,7 +22,7 @@
 	</header>
 	<div id="app">
 		<div style="font-size: 42; font-weight: 800; margin-bottom: 5px;">OCC_连通性测试工具</div>
-		<div style="font-size: 12;">说明：每2s更新一次，若卡住直接F5</div>
+		<div style="font-size: 12;">说明：每3s更新，若卡住直接F5</div>
 		<br>
 		<div >
 			<div class="ping_box">1.
@@ -110,23 +110,30 @@
 			},
 			methods:{
 				get_latency(ip, p, index){
-					p.ping(ip, function(err, data){	
-						let ping_value = null;
-						if (index == 1) {
-							ping_value = document.getElementById("ping1");	
-						} else if (index == 2){
-							ping_value = document.getElementById("ping2");
-						} else if (index == 3){
-							ping_value = document.getElementById("ping3");
-						} else if (index == 4){
-							ping_value = document.getElementById("ping4");
-						} else if (index == 5){
-							ping_value = document.getElementById("ping5");
-						}	
-						if (data < 2000 && data > 1) {
-							ping_value.textContent = ' 状态: OK 延迟: ' + data;					
-						}				
-					})			
+					let ping_value = null;
+					let ip_port = ip + ':808'
+					if (index == 1) {
+						ping_value = document.getElementById("ping1");	
+					} else if (index == 2){
+						ping_value = document.getElementById("ping2");
+					} else if (index == 3){
+						ping_value = document.getElementById("ping3");
+					} else if (index == 4){
+						ping_value = document.getElementById("ping4");
+					} else if (index == 5){
+						ping_value = document.getElementById("ping5");
+					}
+					p.ping(ip, function(err, data){
+						if (data < 1000 && data > 1) {
+							ping_value.textContent = ' 状态: OK 延迟: ' + data;	
+						}
+					})
+					p.ping(ip_port, function(err, data){					
+						if (data < 1000 && data > 1 && ok == 0) {
+							ping_value.textContent = ' 状态: OK 延迟: ' + data;				
+						}
+					})
+					
 				},
 				
 				stop_latency_1(){
@@ -192,17 +199,17 @@
 							this.show_5 = true;
 						}
 						let ip = 'http://' + raw_ip;		
-						let p = new Ping();
+						let p = new Ping(1000);
 						if (index == 1) {
-							this.inter_1 = setInterval(this.get_latency, 2000, ip, p, 1);	
+							this.inter_1 = setInterval(this.get_latency, 3000, ip, p, 1);	
 						} else if (index == 2){
-							this.inter_2 = setInterval(this.get_latency, 2000, ip, p, 2);
+							this.inter_2 = setInterval(this.get_latency, 3000, ip, p, 2);
 						} else if (index == 3){
-							this.inter_3 = setInterval(this.get_latency, 2000, ip, p, 3);
+							this.inter_3 = setInterval(this.get_latency, 3000, ip, p, 3);
 						} else if (index == 4){
-							this.inter_4 = setInterval(this.get_latency, 2000, ip, p, 4);
+							this.inter_4 = setInterval(this.get_latency, 3000, ip, p, 4);
 						} else if (index == 5){
-							this.inter_5 = setInterval(this.get_latency, 2000, ip, p, 5);
+							this.inter_5 = setInterval(this.get_latency, 3000, ip, p, 5);
 						}	
 					}
 								
